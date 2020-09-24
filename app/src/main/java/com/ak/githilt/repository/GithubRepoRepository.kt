@@ -1,0 +1,34 @@
+package com.ak.githilt.repository
+
+import com.ak.githilt.local.CacheMapper
+import com.ak.githilt.local.RepoDao
+import com.ak.githilt.model.Repo
+import com.ak.githilt.remote.GithubAPIService
+import com.ak.githilt.remote.NetworkMapper
+import com.ak.githilt.util.DataState
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
+import java.lang.Exception
+
+class GithubRepoRepository constructor(
+    private val repoDao: RepoDao,
+    private val githubAPIService: GithubAPIService,
+    private val cacheMapper: CacheMapper,
+    private val networkMapper: NetworkMapper
+) {
+
+    suspend fun getRepositories(): Flow<DataState<List<Repo>>> = flow {
+        emit(DataState.Loading)
+        try {
+            val networkRepos = githubAPIService.searchRepos("android", 1, 10) // TODO pagination
+            val repos = networkMapper.mapFromEntityList(networkRepos.items)
+            for (repo in repos){
+                repoDao.insert(cacheMapper.mapToEntity(repo))
+            }
+            val cacheRepos = repoDao.getRepos()
+            emit(DataState.Success(cacheMapper.mapFromEntityList(cacheRepos)))
+        } catch (e: Exception){
+            emit(DataState.Error(e))
+        }
+    }
+}
