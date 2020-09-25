@@ -29,5 +29,8 @@ data class RepoCacheEntity(
     var forksCount: Int,
 
     @ColumnInfo(name = "language")
-    var language: String?
+    var language: String?,
+
+    @ColumnInfo(name = "page")
+    var page: Int
 )

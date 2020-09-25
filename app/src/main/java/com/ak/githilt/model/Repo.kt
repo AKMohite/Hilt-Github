@@ -8,5 +8,6 @@ data class Repo (
     val repoUrl: String,
     val starsCount: Int,
     val forksCount: Int,
-    val language: String?
+    val language: String?,
+    val page: Int
 )

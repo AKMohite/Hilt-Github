@@ -11,6 +11,6 @@ interface RepoDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(repoEntity: RepoCacheEntity): Long
 
-    @Query("SELECT * FROM repos")
-    suspend fun getRepos(): List<RepoCacheEntity>
+    @Query("SELECT * FROM repos WHERE page = :page")
+    suspend fun getRepos(page: Int): List<RepoCacheEntity>
 }

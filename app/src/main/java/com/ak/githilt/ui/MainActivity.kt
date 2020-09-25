@@ -26,7 +26,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         subscribeObservers()
-        viewModel.setStateEvent(RepoStateEvent.GetRepoEvents)
+        viewModel.setStateEvent(RepoStateEvent.GetRepoEvents("android", 1)) // TODO pagination
     }
 
     private fun subscribeObservers(){

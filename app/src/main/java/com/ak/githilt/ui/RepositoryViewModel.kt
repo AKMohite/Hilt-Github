@@ -27,7 +27,7 @@ class RepositoryViewModel
         viewModelScope.launch{
             when(repoStateEvent){
                 is RepoStateEvent.GetRepoEvents -> {
-                    githubRepoRepository.getRepositories()
+                    githubRepoRepository.getRepositories(repoStateEvent.repoQuery, repoStateEvent.pageNo) // TODO pagination
                         .onEach { dataState ->
                             _dataState.value = dataState
                         }
@@ -44,6 +44,6 @@ class RepositoryViewModel
 }
 
 sealed class RepoStateEvent{
-    object GetRepoEvents: RepoStateEvent()
+    data class GetRepoEvents(val repoQuery: String, val pageNo: Int): RepoStateEvent()
     object None: RepoStateEvent()
 }

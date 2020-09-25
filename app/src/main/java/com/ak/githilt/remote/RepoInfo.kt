@@ -10,5 +10,6 @@ data class RepoInfo (
     @SerializedName("html_url") val url: String,
     @SerializedName("stargazers_count") val stars: Int,
     @SerializedName("forks_count") val forks: Int,
-    @SerializedName("language") val language: String?
+    @SerializedName("language") val language: String?,
+    var page: Int
 )

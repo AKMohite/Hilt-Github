@@ -14,7 +14,8 @@ class CacheMapper @Inject constructor(): EntityMapper<RepoCacheEntity, Repo> {
             repoUrl = entity.repoUrl,
             starsCount = entity.starsCount,
             forksCount = entity.forksCount,
-            language = entity.language
+            language = entity.language,
+            page = entity.page
 
         )
     }
@@ -28,7 +29,8 @@ class CacheMapper @Inject constructor(): EntityMapper<RepoCacheEntity, Repo> {
             repoUrl = domainModel.repoUrl,
             starsCount = domainModel.starsCount,
             forksCount = domainModel.forksCount,
-            language = domainModel.language
+            language = domainModel.language,
+            page = domainModel.page
         )
     }
 

@@ -16,8 +16,8 @@ class NetworkMapper @Inject constructor(): EntityMapper<RepoInfo, Repo> {
             repoUrl = entity.url,
             starsCount = entity.stars,
             forksCount = entity.forks,
-            language = entity.language
-
+            language = entity.language,
+            page = entity.page
         )
     }
 
@@ -30,8 +30,8 @@ class NetworkMapper @Inject constructor(): EntityMapper<RepoInfo, Repo> {
             url = domainModel.repoUrl,
             stars = domainModel.starsCount,
             forks = domainModel.forksCount,
-            language = domainModel.language
-
+            language = domainModel.language,
+            page = domainModel.page
         )
     }
 

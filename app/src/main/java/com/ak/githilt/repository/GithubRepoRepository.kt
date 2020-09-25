@@ -5,6 +5,7 @@ import com.ak.githilt.local.RepoDao
 import com.ak.githilt.model.Repo
 import com.ak.githilt.remote.GithubAPIService
 import com.ak.githilt.remote.NetworkMapper
+import com.ak.githilt.remote.PER_PAGE_ITEMS
 import com.ak.githilt.util.DataState
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -17,15 +18,21 @@ class GithubRepoRepository constructor(
     private val networkMapper: NetworkMapper
 ) {
 
-    suspend fun getRepositories(): Flow<DataState<List<Repo>>> = flow {
+    suspend fun getRepositories(repoQuery: String, pageNo: Int): Flow<DataState<List<Repo>>> = flow {
         emit(DataState.Loading)
         try {
-            val networkRepos = githubAPIService.searchRepos("android", 1, 10) // TODO pagination
-            val repos = networkMapper.mapFromEntityList(networkRepos.items)
-            for (repo in repos){
-                repoDao.insert(cacheMapper.mapToEntity(repo))
+
+            var cacheRepos = repoDao.getRepos(pageNo)
+            if (cacheRepos.isNullOrEmpty()) {
+                val networkRepos = githubAPIService.searchRepos(repoQuery, pageNo, PER_PAGE_ITEMS)
+                networkRepos.items.forEach { repo -> repo.page = 1 }
+                val repos = networkMapper.mapFromEntityList(networkRepos.items)
+                for (repo in repos) {
+                    repoDao.insert(cacheMapper.mapToEntity(repo))
+                }
+
+                cacheRepos = repoDao.getRepos(pageNo)
             }
-            val cacheRepos = repoDao.getRepos()
             emit(DataState.Success(cacheMapper.mapFromEntityList(cacheRepos)))
         } catch (e: Exception){
             emit(DataState.Error(e))
