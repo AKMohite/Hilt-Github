@@ -3,8 +3,10 @@ package com.ak.githilt.ui
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.ak.githilt.R
 import com.ak.githilt.model.Repo
 import com.ak.githilt.util.DataState
@@ -21,12 +23,20 @@ class MainActivity : AppCompatActivity() {
 
     private val viewModel: RepositoryViewModel by viewModels()
 
+    private val adapter = RepositoryAdapter()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        initViews()
         subscribeObservers()
         viewModel.setStateEvent(RepoStateEvent.GetRepoEvents("android", 1)) // TODO pagination
+    }
+
+    private fun initViews() {
+        repo_list.layoutManager = LinearLayoutManager(this)
+        repo_list.adapter = adapter
     }
 
     private fun subscribeObservers(){
@@ -50,10 +60,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun displayError(message: String?){
-        if (message != null)
-            text.text = message
-        else
-            text.text = "Unknown Error"
+        Toast.makeText(this, message ?: "Unknown Error", Toast.LENGTH_LONG).show()
     }
 
     private fun displayProgressBar(isVisible: Boolean){
@@ -61,10 +68,12 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun loadData(repos: List<Repo>){
-        val sb = StringBuilder("")
+        /*val sb = StringBuilder("")
         for (repo in repos){
             sb.append("${repo.id} ==> ${repo.fullName}\n")
         }
-        text.text = sb.toString()
+        text.text = sb.toString()*/
+
+        adapter.updateRepoList(repos)
     }
 }
