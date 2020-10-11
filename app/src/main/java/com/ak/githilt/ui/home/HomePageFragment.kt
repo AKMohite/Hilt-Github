@@ -4,10 +4,13 @@ import android.os.Bundle
 import android.view.*
 import android.widget.Toast
 import androidx.appcompat.widget.SearchView
+import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.paging.CombinedLoadStates
+import androidx.paging.LoadState
 import androidx.paging.PagingData
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.ak.githilt.R
@@ -46,11 +49,33 @@ class HomePageFragment: Fragment() {
     }
 
     private fun initViews() {
-        repo_list.apply {
-            layoutManager = LinearLayoutManager(context)
-            adapter = repoAdapter.withLoadStateFooter(
-                footer = RepositoryLoadStateAdapter { repoAdapter.retry() }
-            )
+        binding.apply {
+            repoList.apply {
+                layoutManager = LinearLayoutManager(context)
+                adapter = repoAdapter.withLoadStateFooter(
+                    footer = RepositoryLoadStateAdapter { repoAdapter.retry() }
+                )
+            }
+
+            retryButton.setOnClickListener { repoAdapter.retry() }
+        }
+
+        repoAdapter.addLoadStateListener { loadState: CombinedLoadStates ->
+            binding.apply {
+                progressBar.isVisible = loadState.source.refresh is LoadState.Loading
+                repoList.isVisible = loadState.source.refresh is LoadState.NotLoading
+                retryButton.isVisible = loadState.source.refresh is LoadState.Error
+                errorText.isVisible = loadState.source.refresh is LoadState.Error
+
+//                empty view
+                if (loadState.source.refresh is LoadState.NotLoading && loadState.append.endOfPaginationReached && repoAdapter.itemCount < 1){
+                    repoList.isVisible = false
+                    errorText.isVisible = true
+                    errorText.text = "No repos found"
+                } else{
+                    errorText.isVisible = false
+                }
+            }
         }
     }
 
