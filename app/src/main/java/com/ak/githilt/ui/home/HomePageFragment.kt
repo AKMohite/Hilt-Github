@@ -1,10 +1,9 @@
 package com.ak.githilt.ui.home
 
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.Toast
+import androidx.appcompat.widget.SearchView
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -42,6 +41,8 @@ class HomePageFragment: Fragment() {
         super.onViewCreated(view, savedInstanceState)
         initViews()
         subscribeObservers()
+
+        setHasOptionsMenu(true)
     }
 
     private fun initViews() {
@@ -74,6 +75,32 @@ class HomePageFragment: Fragment() {
 
         viewModel.repos.observe(viewLifecycleOwner, Observer { repoPagingData: PagingData<Repo> ->
             repoAdapter.submitData(viewLifecycleOwner.lifecycle, repoPagingData)
+        })
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        super.onCreateOptionsMenu(menu, inflater)
+
+        inflater.inflate(R.menu.menu_home, menu)
+
+        val searchBtn = menu.findItem(R.id.menu_search)
+        val searchView = searchBtn.actionView as SearchView
+
+        searchView.setOnQueryTextListener(object: SearchView.OnQueryTextListener{
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                if (!query.isNullOrEmpty()){
+                    binding.repoList.scrollToPosition(0)
+                    viewModel.searchRepo(query)
+                    searchView.clearFocus()
+                }
+
+                return true
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                return true
+            }
+
         })
     }
 
