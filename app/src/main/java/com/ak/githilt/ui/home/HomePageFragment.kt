@@ -42,13 +42,14 @@ class HomePageFragment: Fragment() {
         super.onViewCreated(view, savedInstanceState)
         initViews()
         subscribeObservers()
-//        viewModel.setStateEvent(RepoStateEvent.GetRepoEvents("android", 1)) // TODO pagination
     }
 
     private fun initViews() {
         repo_list.apply {
             layoutManager = LinearLayoutManager(context)
-            adapter = repoAdapter
+            adapter = repoAdapter.withLoadStateFooter(
+                footer = RepositoryLoadStateAdapter { repoAdapter.retry() }
+            )
         }
     }
 
