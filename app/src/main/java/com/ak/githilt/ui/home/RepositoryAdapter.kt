@@ -1,15 +1,25 @@
-package com.ak.githilt.ui
+package com.ak.githilt.ui.home
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
+import androidx.paging.PagingDataAdapter
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.ak.githilt.R
 import com.ak.githilt.databinding.RepoItemBinding
 import com.ak.githilt.model.Repo
 
-class RepositoryAdapter: RecyclerView.Adapter<RepositoryAdapter.RepositoryViewHolder>() {
+class RepositoryAdapter: PagingDataAdapter<Repo, RepositoryAdapter.RepositoryViewHolder>(REPOSITORY_COMPARATOR) {
+
+    companion object{
+        private val REPOSITORY_COMPARATOR = object : DiffUtil.ItemCallback<Repo>(){
+            override fun areItemsTheSame(oldItem: Repo, newItem: Repo): Boolean = oldItem.id == newItem.id
+
+            override fun areContentsTheSame(oldItem: Repo, newItem: Repo): Boolean = oldItem == newItem
+
+        }
+    }
 
     private val repoList: MutableList<Repo> = mutableListOf()
 
@@ -20,15 +30,15 @@ class RepositoryAdapter: RecyclerView.Adapter<RepositoryAdapter.RepositoryViewHo
         return RepositoryViewHolder(binding)
     }
 
-    override fun getItemCount(): Int = repoList.size
+//    override fun getItemCount(): Int = repoList.size
 
     override fun onBindViewHolder(holder: RepositoryViewHolder, position: Int) {
         holder.binding.apply {
-            repo = repoList[position]
+            repo = getItem(position)
         }
     }
 
-    fun updateRepoList(repoItems: List<Repo>){
+    fun addNewRepoList(repoItems: List<Repo>){
         val previousSize = repoList.size
         repoList.addAll(repoItems)
         notifyItemRangeChanged(previousSize, repoItems.size)

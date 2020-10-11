@@ -1,12 +1,12 @@
-package com.ak.githilt.ui
+package com.ak.githilt.ui.home
 
 import androidx.hilt.Assisted
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
+import androidx.paging.cachedIn
 import com.ak.githilt.model.Repo
 import com.ak.githilt.repository.GithubRepoRepository
 import com.ak.githilt.util.DataState
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -22,6 +22,21 @@ class RepositoryViewModel
     private val _dataState: MutableLiveData<DataState<List<Repo>>> = MutableLiveData()
     val dataState: LiveData<DataState<List<Repo>>>
         get() = _dataState
+
+    private val currentQuery: MutableLiveData<String> = MutableLiveData(DEFAULT_SEARCH_QUERY)
+
+    val repos = currentQuery.switchMap { query ->
+        githubRepoRepository.getPaginatedRepositories(query)
+            .cachedIn(viewModelScope)
+    }
+
+    companion object{
+        private const val DEFAULT_SEARCH_QUERY = "android"
+    }
+
+    fun searchRepo(query: String){
+        currentQuery.value = query
+    }
 
     fun setStateEvent(repoStateEvent: RepoStateEvent){
         viewModelScope.launch{

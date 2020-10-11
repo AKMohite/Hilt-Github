@@ -1,5 +1,11 @@
 package com.ak.githilt.repository
 
+import androidx.lifecycle.LiveData
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
+import androidx.paging.liveData
+import com.ak.githilt.data.RepoPagingSource
 import com.ak.githilt.local.CacheMapper
 import com.ak.githilt.local.RepoDao
 import com.ak.githilt.model.Repo
@@ -37,5 +43,17 @@ class GithubRepoRepository constructor(
         } catch (e: Exception){
             emit(DataState.Error(e))
         }
+    }
+
+    fun getPaginatedRepositories(query: String): LiveData<PagingData<Repo>>{
+
+        return Pager(
+            config = PagingConfig(
+                pageSize = PER_PAGE_ITEMS,
+                maxSize = 100,
+                enablePlaceholders = false
+            ),
+            pagingSourceFactory = { RepoPagingSource(githubAPIService, query, cacheMapper, networkMapper) }
+        ).liveData
     }
 }

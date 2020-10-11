@@ -5,19 +5,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.activity.viewModels
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.paging.PagingData
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.ak.githilt.R
 import com.ak.githilt.databinding.FragmentHomePageBinding
 import com.ak.githilt.model.Repo
-import com.ak.githilt.ui.RepoStateEvent
-import com.ak.githilt.ui.RepositoryAdapter
-import com.ak.githilt.ui.RepositoryViewModel
-import com.ak.githilt.util.DataState
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_home_page.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -46,7 +42,7 @@ class HomePageFragment: Fragment() {
         super.onViewCreated(view, savedInstanceState)
         initViews()
         subscribeObservers()
-        viewModel.setStateEvent(RepoStateEvent.GetRepoEvents("android", 1)) // TODO pagination
+//        viewModel.setStateEvent(RepoStateEvent.GetRepoEvents("android", 1)) // TODO pagination
     }
 
     private fun initViews() {
@@ -57,7 +53,7 @@ class HomePageFragment: Fragment() {
     }
 
     private fun subscribeObservers(){
-        viewModel.dataState.observe(viewLifecycleOwner, Observer { dataState ->
+        /*viewModel.dataState.observe(viewLifecycleOwner, Observer { dataState ->
             when(dataState){
                 is DataState.Success<List<Repo>> -> {
                     displayProgressBar(false)
@@ -73,6 +69,10 @@ class HomePageFragment: Fragment() {
                     displayProgressBar(true)
                 }
             }
+        })*/
+
+        viewModel.repos.observe(viewLifecycleOwner, Observer { repoPagingData: PagingData<Repo> ->
+            repoAdapter.submitData(viewLifecycleOwner.lifecycle, repoPagingData)
         })
     }
 
@@ -86,6 +86,6 @@ class HomePageFragment: Fragment() {
 
     private fun loadData(repos: List<Repo>){
 
-        repoAdapter.updateRepoList(repos)
+        repoAdapter.addNewRepoList(repos)
     }
 }
