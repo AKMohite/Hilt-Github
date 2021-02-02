@@ -3,15 +3,17 @@ package com.ak.githilt.ui.home
 import androidx.hilt.Assisted
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
+import androidx.paging.ExperimentalPagingApi
 import androidx.paging.cachedIn
+import androidx.paging.map
 import com.ak.githilt.model.Repo
 import com.ak.githilt.repository.GithubRepoRepository
 import com.ak.githilt.util.DataState
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
+@ExperimentalPagingApi
 @ExperimentalCoroutinesApi
 class RepositoryViewModel
 @ViewModelInject constructor(
@@ -23,10 +25,27 @@ class RepositoryViewModel
     val dataState: LiveData<DataState<List<Repo>>>
         get() = _dataState
 
-    private val currentQuery: MutableLiveData<String> = MutableLiveData(DEFAULT_SEARCH_QUERY)
+    private val currentQuery: MutableStateFlow<String> = MutableStateFlow(DEFAULT_SEARCH_QUERY)
 
-    val repos = currentQuery.switchMap { query ->
+    val repos = currentQuery.flatMapLatest { query ->
         githubRepoRepository.getPaginatedRepositories(query)
+            .map {pagingData ->
+                pagingData.map { entity ->
+                    Repo(
+                        id = entity.id,
+                        name = entity.name,
+                        fullName = entity.fullName,
+                        repoDescription = entity.repoDescription,
+                        repoUrl = entity.repoUrl,
+                        starsCount = entity.starsCount,
+                        forksCount = entity.forksCount,
+                        language = entity.language,
+                        page = entity.page
+
+                    )
+                }
+
+            }
             .cachedIn(viewModelScope)
     }
 

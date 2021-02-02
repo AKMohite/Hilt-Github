@@ -37,4 +37,8 @@ class CacheMapper @Inject constructor(): EntityMapper<RepoCacheEntity, Repo> {
     fun mapFromEntityList(entities: List<RepoCacheEntity>): List<Repo>{
         return entities.map { entity -> mapFromEntity(entity) }
     }
+
+    fun mapToEntityList(repos: List<Repo>): List<RepoCacheEntity>{
+        return repos.map { entity -> mapToEntity(entity) }
+    }
 }

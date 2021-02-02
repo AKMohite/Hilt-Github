@@ -1,6 +1,7 @@
 package com.ak.githilt.di
 
 import com.ak.githilt.local.CacheMapper
+import com.ak.githilt.local.GithubDatabase
 import com.ak.githilt.local.RepoDao
 import com.ak.githilt.remote.GithubAPIService
 import com.ak.githilt.remote.NetworkMapper
@@ -18,12 +19,12 @@ object RepositoryModule {
     @Singleton
     @Provides
     fun provideGithubRepoRepository(
-        repoDao: RepoDao,
+        githubDatabase: GithubDatabase,
         githubAPIService: GithubAPIService,
         cacheMapper: CacheMapper,
         networkMapper: NetworkMapper
     ): GithubRepoRepository = GithubRepoRepository(
-        repoDao, githubAPIService, cacheMapper, networkMapper
+        githubDatabase, githubAPIService, cacheMapper, networkMapper
     )
 
 }

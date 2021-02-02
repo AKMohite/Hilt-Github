@@ -28,6 +28,6 @@ object LocalModule {
 
     @Singleton
     @Provides
-    fun provideRepoDao(githubDatabase: GithubDatabase): RepoDao = githubDatabase.repoDao()
+    fun provideRepoDao(githubDatabase: GithubDatabase): RepoDao = githubDatabase.reposDao()
 
 }

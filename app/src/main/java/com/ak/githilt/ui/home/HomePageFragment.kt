@@ -9,7 +9,9 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import androidx.paging.CombinedLoadStates
+import androidx.paging.ExperimentalPagingApi
 import androidx.paging.LoadState
 import androidx.paging.PagingData
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -19,7 +21,10 @@ import com.ak.githilt.model.Repo
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_home_page.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.collectLatest
 
+@ExperimentalPagingApi
 @ExperimentalCoroutinesApi
 @AndroidEntryPoint
 class HomePageFragment: Fragment() {
@@ -98,9 +103,11 @@ class HomePageFragment: Fragment() {
             }
         })*/
 
-        viewModel.repos.observe(viewLifecycleOwner, Observer { repoPagingData: PagingData<Repo> ->
-            repoAdapter.submitData(viewLifecycleOwner.lifecycle, repoPagingData)
-        })
+        lifecycleScope.launchWhenStarted {
+            viewModel.repos.collectLatest { repos ->
+                repoAdapter.submitData(repos)
+            }
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
