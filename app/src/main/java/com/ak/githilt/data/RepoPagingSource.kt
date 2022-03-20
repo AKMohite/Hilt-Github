@@ -1,6 +1,7 @@
 package com.ak.githilt.data
 
 import androidx.paging.PagingSource
+import androidx.paging.PagingState
 import com.ak.githilt.local.CacheMapper
 import com.ak.githilt.model.Repo
 import com.ak.githilt.remote.GithubAPIService
@@ -35,6 +36,10 @@ class RepoPagingSource(
         } catch (error: HttpException){
             LoadResult.Error(error)
         }
+    }
+
+    override fun getRefreshKey(state: PagingState<Int, Repo>): Int? {
+        return 0
     }
 
 }

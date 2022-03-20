@@ -1,24 +1,27 @@
 package com.ak.githilt.ui.home
 
-import androidx.hilt.Assisted
-import androidx.hilt.lifecycle.ViewModelInject
-import androidx.lifecycle.*
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.cachedIn
 import androidx.paging.map
 import com.ak.githilt.model.Repo
 import com.ak.githilt.repository.GithubRepoRepository
 import com.ak.githilt.util.DataState
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @ExperimentalPagingApi
 @ExperimentalCoroutinesApi
+@HiltViewModel
 class RepositoryViewModel
-@ViewModelInject constructor(
-    private val githubRepoRepository: GithubRepoRepository,
-    @Assisted private val savedStateHandle: SavedStateHandle
+@Inject constructor(
+    private val githubRepoRepository: GithubRepoRepository
 ): ViewModel(){
 
     private val _dataState: MutableLiveData<DataState<List<Repo>>> = MutableLiveData()

@@ -1,13 +1,13 @@
 package com.ak.githilt.repository
 
-import androidx.lifecycle.LiveData
-import androidx.paging.*
+import androidx.paging.ExperimentalPagingApi
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
 import com.ak.githilt.data.GithubRemoteMediator
-import com.ak.githilt.data.RepoPagingSource
 import com.ak.githilt.local.CacheMapper
 import com.ak.githilt.local.GithubDatabase
 import com.ak.githilt.local.RepoCacheEntity
-import com.ak.githilt.local.RepoDao
 import com.ak.githilt.model.Repo
 import com.ak.githilt.remote.GithubAPIService
 import com.ak.githilt.remote.NetworkMapper
@@ -15,7 +15,6 @@ import com.ak.githilt.remote.PER_PAGE_ITEMS
 import com.ak.githilt.util.DataState
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import java.lang.Exception
 
 @ExperimentalPagingApi
 class GithubRepoRepository constructor(
@@ -56,7 +55,8 @@ class GithubRepoRepository constructor(
         return Pager(
             config = PagingConfig(
                 pageSize = PER_PAGE_ITEMS,
-                enablePlaceholders = false
+                enablePlaceholders = false,
+                prefetchDistance = 3
             ),
             remoteMediator = GithubRemoteMediator(
                 query,
