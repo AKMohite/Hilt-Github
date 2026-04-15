@@ -25,3 +25,4 @@ dependencyResolutionManagement {
 rootProject.name = "GitStar"
 include(":app")
 include(":core:designsystem")
+include(":features:discover:presentation")
