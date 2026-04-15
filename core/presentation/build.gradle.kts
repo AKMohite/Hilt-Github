@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "app.mak.gitstar.features.discover.presentation"
+    namespace = "app.mak.gitstar.core.presentation"
     compileSdk {
         version = release(36) {
             minorApiLevel = 1
@@ -37,22 +37,12 @@ android {
 }
 
 dependencies {
-    implementation(project(":core:designsystem"))
     implementation(project(":core:domain"))
-    implementation(project(":core:presentation"))
-    implementation(platform(libs.compose.bom))
-    implementation(libs.compose.ui)
-    implementation(libs.compose.ui.graphics)
-    implementation(libs.compose.ui.tooling.preview)
-    implementation(libs.compose.material3)
-    implementation(libs.compose.material.icons)
-    debugImplementation(libs.compose.ui.tooling)
-    implementation(libs.coil.compose)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
-    implementation(libs.koin.core)
-    implementation(libs.koin.androidx.compose)
     implementation(libs.material)
+    implementation(platform(libs.compose.bom))
+    implementation(libs.compose.ui)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

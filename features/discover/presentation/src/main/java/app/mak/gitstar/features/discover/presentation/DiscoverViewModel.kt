@@ -2,13 +2,25 @@ package app.mak.gitstar.features.discover.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import app.mak.gitstar.core.domain.model.onFailure
+import app.mak.gitstar.core.domain.model.onSuccess
+import app.mak.gitstar.core.domain.repository.GitRepoRepository
+import app.mak.gitstar.features.discover.presentation.model.DiscoverAction
+import app.mak.gitstar.features.discover.presentation.model.DiscoverEvent
+import app.mak.gitstar.features.discover.presentation.model.DiscoverState
+import app.mak.gitstar.features.discover.presentation.model.RepoSort
+import app.mak.gitstar.features.discover.presentation.model.toRepositoryUi
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-internal class DiscoverViewModel: ViewModel() {
+internal class DiscoverViewModel(
+    private val gitRepo: GitRepoRepository
+): ViewModel() {
 
     private val _state = MutableStateFlow(DiscoverState())
     val state = _state.asStateFlow()
@@ -20,7 +32,7 @@ internal class DiscoverViewModel: ViewModel() {
     private var canLoadMore = true
 
     init {
-        loadCurrentUser()
+        loadTrendingRepositories()
     }
 
     fun onAction(action: DiscoverAction) {
@@ -28,56 +40,37 @@ internal class DiscoverViewModel: ViewModel() {
             DiscoverAction.OnLoadMore -> TODO()
             DiscoverAction.OnRefresh -> TODO()
             is DiscoverAction.OnRepoClick -> TODO()
+            is DiscoverAction.OnSortChange -> TODO()
+            is DiscoverAction.OnToggleForked -> TODO()
         }
     }
 
-    private fun loadCurrentUser() {
+    private fun loadTrendingRepositories(isRefresh: Boolean = false) {
         viewModelScope.launch {
+            _state.update { if (isRefresh) it.copy(isRefreshing = true) else it.copy(isLoading = true) }
+            gitRepo.getTrendingRepos( page = 1)
+                .onSuccess { repos ->
+                    val uiModels = repos.map { it.toRepositoryUi() }
+                    _state.update { it.copy(repos = uiModels, isLoading = false, isRefreshing = false, error = null) }
+                    applySort()
+                }
+                .onFailure { error ->
+                    _state.update { it.copy(isLoading = false, isRefreshing = false) }
+//                    _events.send(DiscoverEvent.ShowError(error.toUiText()))
+                }
+        }
+    }
 
+    private fun applySort() {
+        _state.update { state ->
+            val sorted = when (state.sortBy) {
+                RepoSort.UPDATED -> state.repos.sortedByDescending { it.updatedAtFormatted }
+                RepoSort.STARS -> state.repos.sortedByDescending { it.formattedStars }
+                RepoSort.FORKS -> state.repos.sortedByDescending { it.formattedForks }
+                RepoSort.NAME -> state.repos.sortedBy { it.name }
+            }
+            state.copy(repos = sorted)
         }
     }
 
 }
-
-internal data class DiscoverState(
-    val repos: List<RepositoryUi> = emptyList(),
-    val isLoading: Boolean = false,
-    val isRefreshing: Boolean = false,
-//    val error: UiText? = null,
-    val currentUser: String = "",
-    val showForked: Boolean = true,
-    val sortBy: RepoSort = RepoSort.UPDATED
-)
-
-internal enum class RepoSort { UPDATED, STARS, FORKS, NAME }
-
-internal sealed interface DiscoverEvent {
-    data class NavigateToDetail(val owner: String, val repo: String) : DiscoverEvent
-//    data class ShowError(val message: UiText) : DiscoverEvent
-}
-
-internal sealed interface DiscoverAction {
-    data object OnRefresh : DiscoverAction
-    data class OnRepoClick(val fullName: String) : DiscoverAction
-//    data class OnSortChange(val sort: RepoSort) : DiscoverAction
-//    data class OnToggleForked(val show: Boolean) : DiscoverAction
-    data object OnLoadMore : DiscoverAction
-}
-
-internal data class RepositoryUi(
-    val id: Long,
-    val name: String,
-    val fullName: String,
-    val description: String?,
-    val ownerLogin: String,
-    val ownerAvatarUrl: String,
-    val language: String?,
-    val languageColor: String,
-    val formattedStars: String,
-    val formattedForks: String,
-    val isPrivate: Boolean,
-    val isFork: Boolean,
-    val topics: List<String>,
-    val htmlUrl: String,
-    val updatedAtFormatted: String
-)

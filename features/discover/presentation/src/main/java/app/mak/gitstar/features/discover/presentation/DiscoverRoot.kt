@@ -33,6 +33,9 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
@@ -53,6 +56,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.mak.gitstar.core.designsystem.GitStarTheme
 import app.mak.gitstar.core.designsystem.components.RepoCardSkeleton
 import app.mak.gitstar.features.discover.presentation.components.RepoCard
+import app.mak.gitstar.features.discover.presentation.model.DiscoverAction
+import app.mak.gitstar.features.discover.presentation.model.DiscoverState
+import app.mak.gitstar.features.discover.presentation.model.RepoSort
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -61,11 +67,25 @@ fun DiscoverRoot(
 ) {
     val viewModel: DiscoverViewModel = koinViewModel()
     val state by viewModel.state.collectAsStateWithLifecycle()
-    DiscoverScreen(
-        state = state,
-        onAction = viewModel::onAction,
-        modifier = modifier
-    )
+    val snackbarHostState = remember { SnackbarHostState() }
+    Scaffold(
+        topBar = {
+            RepositoriesTopBar(
+                username = state.currentUser,
+                sortBy = state.sortBy,
+                showForked = state.showForked,
+                onSortChange = { viewModel.onAction(DiscoverAction.OnSortChange(it)) },
+                onToggleForked = { viewModel.onAction(DiscoverAction.OnToggleForked(it)) },
+            )
+        },
+        snackbarHost = { SnackbarHost(snackbarHostState) },
+    ) { padding ->
+        DiscoverScreen(
+            state = state,
+            onAction = viewModel::onAction,
+            modifier = modifier.padding(padding),
+        )
+    }
 }
 
 @Composable
