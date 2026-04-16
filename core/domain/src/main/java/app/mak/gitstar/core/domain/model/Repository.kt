@@ -5,7 +5,7 @@ data class Repository(
     val name: String,
     val fullName: String,
     val description: String?,
-    val owner: Owner,
+    val owner: Owner?,
     val language: String?,
     val stargazersCount: Int,
     val forksCount: Int,

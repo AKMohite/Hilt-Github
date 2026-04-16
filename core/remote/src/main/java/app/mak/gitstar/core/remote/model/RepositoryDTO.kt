@@ -85,7 +85,7 @@ data class RepositoryDTO(
     @SerialName("html_url")
     val htmlUrl: String? = null,
     @SerialName("id")
-    val id: Int? = null,
+    val id: Long,
     @SerialName("is_template")
     val isTemplate: Boolean? = null,
     @SerialName("issue_comment_url")
@@ -108,8 +108,8 @@ data class RepositoryDTO(
     val mergesUrl: String? = null,
     @SerialName("milestones_url")
     val milestonesUrl: String? = null,
-    @SerialName("mirror_url")
-    val mirrorUrl: Any? = null,
+//    @SerialName("mirror_url")
+//    val mirrorUrl: Any? = null,
     @SerialName("name")
     val name: String? = null,
     @SerialName("node_id")
@@ -123,7 +123,7 @@ data class RepositoryDTO(
     @SerialName("owner")
     val owner: OwnerDTO? = null,
     @SerialName("private")
-    val `private`: Boolean? = null,
+    val isPrivate: Boolean? = null,
     @SerialName("pull_request_creation_policy")
     val pullRequestCreationPolicy: String? = null,
     @SerialName("pulls_url")
@@ -155,7 +155,7 @@ data class RepositoryDTO(
     @SerialName("teams_url")
     val teamsUrl: String? = null,
     @SerialName("topics")
-    val topics: List<String?>? = null,
+    val topics: List<String>? = null,
     @SerialName("trees_url")
     val treesUrl: String? = null,
     @SerialName("updated_at")

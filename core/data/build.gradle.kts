@@ -1,10 +1,9 @@
 plugins {
     alias(libs.plugins.android.library)
-    alias(libs.plugins.kotlin.serialization)
 }
 
 android {
-    namespace = "app.mak.gitstar.core.remote"
+    namespace = "app.mak.gitstar.core.data"
     compileSdk {
         version = release(36) {
             minorApiLevel = 1
@@ -34,12 +33,8 @@ android {
 }
 
 dependencies {
+    implementation(project(":core:remote"))
     implementation(project(":core:domain"))
-    implementation(libs.ktor.client.core)
-    implementation(libs.ktor.client.android)
-    implementation(libs.ktor.serialization.kotlinx.json)
-    implementation(libs.ktor.client.content.negotiation)
-    implementation(libs.ktor.client.logging)
     implementation(libs.koin.core)
     testImplementation(libs.junit)
 }

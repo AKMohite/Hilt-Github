@@ -21,9 +21,80 @@ internal data class RepositoryUi(
     val updatedAtFormatted: String
 )
 
+internal val dummyRepositories: List<RepositoryUi> = listOf(
+    RepositoryUi(
+        id = 1L,
+        name = "MyAwesomeApp",
+        fullName = "user/MyAwesomeApp",
+        description = "A sample Android app built with Jetpack Compose.",
+        ownerLogin = "user",
+        ownerAvatarUrl = "https://example.com/avatar1.png",
+        language = "Kotlin",
+        languageColor = "#A97BFF",
+        formattedStars = "2.1k",
+        formattedForks = "340",
+        isPrivate = false,
+        isFork = false,
+        topics = listOf("android", "compose", "kotlin"),
+        htmlUrl = "https://github.com/user/MyAwesomeApp",
+        updatedAtFormatted = "Updated Apr 15, 2026"
+    ),
+    RepositoryUi(
+        id = 2L,
+        name = "DataStoreExample",
+        fullName = "user/DataStoreExample",
+        description = "Example of using DataStore in Android Compose.",
+        ownerLogin = "user",
+        ownerAvatarUrl = "https://example.com/avatar2.png",
+        language = "Kotlin",
+        languageColor = "#A97BFF",
+        formattedStars = "850",
+        formattedForks = "93",
+        isPrivate = false,
+        isFork = false,
+        topics = listOf("android", "datastore", "compose"),
+        htmlUrl = "https://github.com/user/DataStoreExample",
+        updatedAtFormatted = "Updated Mar 28, 2026"
+    ),
+    RepositoryUi(
+        id = 3L,
+        name = "RetrofitDemo",
+        fullName = "user/RetrofitDemo",
+        description = "Basic API integration with Retrofit and Compose.",
+        ownerLogin = "user",
+        ownerAvatarUrl = "https://example.com/avatar3.png",
+        language = "Kotlin",
+        languageColor = "#A97BFF",
+        formattedStars = "1.2k",
+        formattedForks = "180",
+        isPrivate = false,
+        isFork = true,
+        topics = listOf("android", "retrofit", "networking"),
+        htmlUrl = "https://github.com/user/RetrofitDemo",
+        updatedAtFormatted = "Updated Feb 14, 2026"
+    ),
+    RepositoryUi(
+        id = 4L,
+        name = "ComposePlayground",
+        fullName = "user/ComposePlayground",
+        description = "Sandbox project to experiment with Compose layouts and animations.",
+        ownerLogin = "user",
+        ownerAvatarUrl = "https://example.com/avatar4.png",
+        language = "Kotlin",
+        languageColor = "#A97BFF",
+        formattedStars = "470",
+        formattedForks = "67",
+        isPrivate = true,
+        isFork = false,
+        topics = listOf("compose", "ui", "animation"),
+        htmlUrl = "https://github.com/user/ComposePlayground",
+        updatedAtFormatted = "Updated Apr 10, 2026"
+    )
+)
+
 internal fun Repository.toRepositoryUi(): RepositoryUi = RepositoryUi(
     id = id, name = name, fullName = fullName, description = description,
-    ownerLogin = owner.login, ownerAvatarUrl = owner.avatarUrl,
+    ownerLogin = owner?.login.orEmpty(), ownerAvatarUrl = owner?.avatarUrl.orEmpty(),
     language = language,
     languageColor = LanguageColors.colorFor(language),
     formattedStars = stargazersCount.formatCount(),

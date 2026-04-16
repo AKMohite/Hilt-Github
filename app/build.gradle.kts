@@ -43,8 +43,9 @@ dependencies {
 
     implementation(project(":features:discover:presentation"))
     implementation(project(":core:designsystem"))
-    implementation(project(":core:remote"))
     implementation(project(":core:domain"))
+    implementation(project(":core:remote"))
+    implementation(project(":core:data"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)

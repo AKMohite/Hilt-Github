@@ -51,6 +51,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.mak.gitstar.core.designsystem.GitStarTheme
@@ -59,6 +61,7 @@ import app.mak.gitstar.features.discover.presentation.components.RepoCard
 import app.mak.gitstar.features.discover.presentation.model.DiscoverAction
 import app.mak.gitstar.features.discover.presentation.model.DiscoverState
 import app.mak.gitstar.features.discover.presentation.model.RepoSort
+import app.mak.gitstar.features.discover.presentation.model.dummyRepositories
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -325,24 +328,52 @@ private fun RepositoriesTopBar(
     )
 }
 
-@Preview(showBackground = true)
-@Composable
-private fun RepositoriesScreenLoadingPreview() {
-    GitStarTheme {
-        DiscoverScreen(
-            state = DiscoverState(
-                isLoading = true
-            ), onAction = {}
+private class DiscoverScreenStateProvider: PreviewParameterProvider<DiscoverState> {
+
+    val data = listOf(
+        Pair(
+            "Loading",
+            DiscoverState(
+                isLoading = true,
+            )
+        ),
+        Pair(
+            "Refreshing",
+            DiscoverState(
+                isRefreshing = true
+            )
+        ),
+        Pair(
+            "Empty",
+            DiscoverState()
+        ),
+        Pair(
+            "Success",
+            DiscoverState(
+                repos = dummyRepositories
+            )
         )
+    )
+
+    override val values: Sequence<DiscoverState>
+        get() = data.map { it.second }.asSequence()
+
+    override fun getDisplayName(index: Int): String {
+        return data[index].first
     }
 }
 
 @Preview(showBackground = true)
 @Composable
-private fun RepositoriesScreenEmptyPreview() {
+private fun RepositoriesScreenLoadingPreview(
+    @PreviewParameter(DiscoverScreenStateProvider::class) previewData: DiscoverState
+) {
     GitStarTheme {
         DiscoverScreen(
-            state = DiscoverState(),
-            onAction = {})
+            state = previewData,
+            onAction = {}
+        )
     }
 }
+
+

@@ -37,11 +37,11 @@ internal class DiscoverViewModel(
 
     fun onAction(action: DiscoverAction) {
         when(action) {
-            DiscoverAction.OnLoadMore -> TODO()
-            DiscoverAction.OnRefresh -> TODO()
-            is DiscoverAction.OnRepoClick -> TODO()
-            is DiscoverAction.OnSortChange -> TODO()
-            is DiscoverAction.OnToggleForked -> TODO()
+            DiscoverAction.OnLoadMore -> {}
+            DiscoverAction.OnRefresh -> {}
+            is DiscoverAction.OnRepoClick -> {}
+            is DiscoverAction.OnSortChange -> {}
+            is DiscoverAction.OnToggleForked -> {}
         }
     }
 

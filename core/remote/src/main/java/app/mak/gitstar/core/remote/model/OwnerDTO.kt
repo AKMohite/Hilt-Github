@@ -21,7 +21,7 @@ data class OwnerDTO(
     @SerialName("html_url")
     val htmlUrl: String? = null,
     @SerialName("id")
-    val id: Int? = null,
+    val id: Long,
     @SerialName("login")
     val login: String? = null,
     @SerialName("node_id")

@@ -1,5 +1,6 @@
 package app.mak.gitstar.core.remote.di
 
+import android.util.Log
 import app.mak.gitstar.core.remote.GitApi
 import app.mak.gitstar.core.remote.KtorApi
 import app.mak.gitstar.core.remote.exception.ExceptionType
@@ -12,8 +13,13 @@ import io.ktor.client.plugins.ClientRequestException
 import io.ktor.client.plugins.HttpResponseValidator
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.defaultRequest
+import io.ktor.client.plugins.logging.DEFAULT
+import io.ktor.client.plugins.logging.LogLevel
+import io.ktor.client.plugins.logging.Logger
+import io.ktor.client.plugins.logging.Logging
 import io.ktor.client.request.header
 import io.ktor.client.statement.HttpResponse
+import io.ktor.http.HttpHeaders
 import io.ktor.http.URLProtocol
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
@@ -36,6 +42,11 @@ internal fun createHttpClient(enableNetworkLogs: Boolean = false): HttpClient {
                 useAlternativeNames = false
             })
         }
+        install(Logging) {
+            logger = Logger.DEFAULT
+            level = LogLevel.HEADERS
+            sanitizeHeader { header -> header == HttpHeaders.Authorization }
+        }
         defaultRequest {
             url {
                 protocol = URLProtocol.HTTPS
@@ -54,6 +65,7 @@ internal fun createHttpClient(enableNetworkLogs: Boolean = false): HttpClient {
                     val exceptionResponseText = exceptionResponse.bodyAsText()
                     throw MissingPageException(exceptionResponse, exceptionResponseText)
                 }*/
+                Log.d(":", "$request")
                 throw handleKtorExceptions(exception) ?: UnknownAPIException(throwable = exception)
             }
         }
